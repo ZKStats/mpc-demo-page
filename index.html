@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MPC Demo Consumer API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 5px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>MPC Demo Consumer API</h1>
+    <div>
+        <label for="apiUrl">API URL:</label>
+        <input type="text" id="apiUrl" value="http://35.72.100.27:8004" />
+    </div>
+    <button onclick="queryComputation(0)">Query Computation 0</button>
+    <button onclick="queryComputation(1)">Query Computation 1</button>
+    <div id="results"></div>
+
+    <script>
+        async function queryComputation(index) {
+            const apiUrl = document.getElementById('apiUrl').value;
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `Querying computation ${index}...`;
+
+            try {
+                const response = await fetch(`${apiUrl}/query-computation`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ computation_index: index }),
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultsDiv.innerHTML = `
+                    <h2>Results for Computation ${index}</h2>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>
