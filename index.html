@@ -11,7 +11,7 @@
             margin: 0 auto;
             padding: 20px;
         }
-        input, button {
+        input {
             margin: 10px 0;
             padding: 5px;
         }
@@ -24,26 +24,16 @@
     <h1>Average ETH balance on Binance</h1>
     <div>
         <label for="apiUrl">API URL:</label>
-        <input type="text" id="apiUrl" value="https://client-api.mpcstats.org:8004" />
+        <input type="text" id="apiUrl" value="https://client-api.mpcstats.org:8004" onchange="fetchResults()" />
     </div>
-    <button onclick="queryComputation(0)">Query Computation 0</button>
-    <button onclick="queryComputation(1)">Query Computation 1</button>
-    <div id="results"></div>
+    <div id="results">Loading...</div>
 
     <script>
-        async function queryComputation(index) {
+        async function fetchResults() {
             const apiUrl = document.getElementById('apiUrl').value;
             const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `Querying computation ${index}...`;
-
             try {
-                const response = await fetch(`${apiUrl}/query-computation`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ computation_index: index }),
-                });
+                const response = await fetch(`${apiUrl}/query-computation`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -51,13 +41,16 @@
 
                 const data = await response.json();
                 resultsDiv.innerHTML = `
-                    <h2>Results for Computation ${index}</h2>
+                    <h2>Computation Results</h2>
                     <pre>${JSON.stringify(data, null, 2)}</pre>
                 `;
             } catch (error) {
                 resultsDiv.innerHTML = `Error: ${error.message}`;
             }
         }
+
+        // Call immediately when page loads
+        fetchResults();
     </script>
 </body>
 </html>
