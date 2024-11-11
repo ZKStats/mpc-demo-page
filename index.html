@@ -98,16 +98,28 @@
         }
         #footer {
             margin-top: 40px;
+            padding: 20px 0;
             text-align: center;
-            font-size: 0.9em;
-            color: #777;
+            border-top: 1px solid #eee;
         }
-        #footer a {
-            color: #007bff;
+        .footer-main {
+            margin-bottom: 10px;
+        }
+        .contact-link {
+            color: #666;
             text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
-        #footer a:hover {
+        .contact-link:hover {
+            color: #007bff;
             text-decoration: underline;
+        }
+        .social-icon {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
         }
         #reminder {
             margin-top: 20px;
@@ -289,7 +301,13 @@
         fetchResults();
     </script>
     <div id="footer">
-        Made by the PSE <a href="https://github.com/zkStats/mpc-demo-infra/" target="_blank">MPCStats</a> team.
+        <div class="footer-main">Made by the <a href="https://github.com/zkStats/mpc-demo-infra/" target="_blank">MPCStats</a> team at PSE.</div>
+        <div class="footer-links">
+            <a href="https://t.me/mpcstats" target="_blank" class="contact-link">
+                Contact us
+                <img src="https://img.icons8.com/ios-filled/24/telegram-app.png" alt="Telegram" class="social-icon" />
+            </a>
+        </div>
     </div>
 </body>
 </html>
