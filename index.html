@@ -3,36 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MPCStats</title>
+    <title>MPCStats - ETH Inequality @ DevCon 2024</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #f0f0f5;
+            color: #333;
+            position: relative;
         }
         input {
             margin: 10px 0;
-            padding: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+        }
+        label {
+            font-weight: bold;
         }
         #results {
             margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        #settings {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        #settingsButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        #settingsButton img {
+            width: 24px;
+            height: 24px;
+        }
+        .stat-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .main-stat {
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .secondary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .stat-box {
+            margin: 10px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.5s ease-in;
+        }
+        .stat-box:hover {
+            transform: scale(1.05);
+        }
+        .stat-box-title {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 10px;
+            font-weight: normal;
+        }
+        .stat-box-note {
+            font-size: 0.8em;
+            color: #777;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        #footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #777;
+        }
+        #footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        #footer a:hover {
+            text-decoration: underline;
+        }
+        #reminder {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fffae6;
+            border-left: 5px solid #ffc107;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            font-size: 1em;
+            color: #333;
+        }
+        #reminder a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        #reminder a:hover {
+            text-decoration: underline;
+        }
+        .learn-more {
+            font-size: 0.8em;
+            color: #007bff;
+            text-decoration: none;
+            margin-left: 5px;
+        }
+        .learn-more:hover {
+            text-decoration: underline;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .gini-visualization {
+            height: 200px;
+            margin: 10px 0;
+            padding: 10px;
+        }
+        .stat-box {
+            /* 增加一點高度來容納圖表 */
+            min-height: 300px;
+        }
+        .gini-scale {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .scale-bar {
+            flex-grow: 1;
+            height: 8px;
+            background: linear-gradient(to right, #4caf50, #ffc107, #ff9800, #f44336);
+            border-radius: 4px;
+            position: relative;
+        }
+        .scale-marker {
+            position: absolute;
+            width: 4px;
+            height: 16px;
+            background: #333;
+            transform: translateX(-50%);
+            top: -4px;
+        }
+        .gini-indicator {
+            font-size: 2.5em;
+            padding: 25px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        .stat-box.secondary {
+            padding: 15px;
+            min-height: auto;
+            font-size: 1.2em;
+        }
+        .stat-box.main-stat {
+            min-height: auto;
         }
     </style>
 </head>
 <body>
-    <h1>Average ETH balance on Binance</h1>
-    <div>
+    <h1>ETH Inequality @ DevCon 2024</h1>
+    <button id="settingsButton" onclick="toggleSettings()">
+        <img src="https://img.icons8.com/ios-filled/50/000000/settings.png" alt="Settings" />
+    </button>
+    <div id="settings">
         <label for="apiUrl">API URL:</label>
         <input type="text" id="apiUrl" value="https://client-api.mpcstats.org:8004" onchange="fetchResults()" />
     </div>
+
+    <div id="reminder">
+        <strong>Share your ETH balance on Binance:</strong> Follow the instructions in our <a href="https://github.com/ZKStats/mpc-demo-infra/tree/main/mpc_demo_infra/client_cli/docker" target="_blank">GitHub repository</a>. Contributors will receive an NFT and a chance to win $100 DAI!
+    </div>
+
     <div id="results">Loading...</div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        function toggleSettings() {
+            const settingsDiv = document.getElementById('settings');
+            if (settingsDiv.style.display === 'none' || settingsDiv.style.display === '') {
+                settingsDiv.style.display = 'block';
+            } else {
+                settingsDiv.style.display = 'none';
+            }
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US', {
+                maximumFractionDigits: 4
+            }).format(num);
+        }
+
+        function getGiniColor(gini) {
+            if (gini < 0.3) return '#4caf50';      // 綠色 - 較平等
+            if (gini < 0.4) return '#ffc107';      // 黃色 - 中等
+            if (gini < 0.5) return '#ff9800';      // 橙色 - 不平等
+            return '#f44336';                       // 紅色 - 非常不平等
+        }
+
         async function fetchResults() {
             const apiUrl = document.getElementById('apiUrl').value;
             const resultsDiv = document.getElementById('results');
             try {
+                resultsDiv.innerHTML = "<span>Loading...</span>";
                 const response = await fetch(`${apiUrl}/query-computation`);
 
                 if (!response.ok) {
@@ -40,17 +239,58 @@
                 }
 
                 const data = await response.json();
+                const { num_data_providers, max, mean, median, gini_coefficient } = data;
+                const giniColor = getGiniColor(gini_coefficient);
                 resultsDiv.innerHTML = `
-                    <h2>Computation Results</h2>
-                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <div class="stat-container">
+                        <div class="main-stat">
+                            <div class="gini-indicator" style="background-color: ${giniColor}">
+                                ${formatNumber(gini_coefficient)}
+                            </div>
+                            <div class="gini-scale">
+                                <span>0</span>
+                                <div class="scale-bar">
+                                    <div class="scale-marker" style="left: ${gini_coefficient * 100}%"></div>
+                                </div>
+                                <span>1</span>
+                            </div>
+                            <div class="stat-box-title">Gini (Inequality) Coefficient</div>
+                            <div class="stat-box-note">
+                                0: Perfect Equality, 1: Maximum Inequality
+                                <a href="https://en.wikipedia.org/wiki/Gini_coefficient" target="_blank" class="learn-more">(Learn more)</a>
+                            </div>
+                        </div>
+                        <div class="secondary-stats">
+                            <div class="stat-box secondary">
+                                ${formatNumber(max)}
+                                <div class="stat-box-title">Max ETH Balance</div>
+                            </div>
+                            <div class="stat-box secondary">
+                                ${formatNumber(mean)}
+                                <div class="stat-box-title">Mean ETH Balance</div>
+                            </div>
+                            <div class="stat-box secondary">
+                                ${formatNumber(median)}
+                                <div class="stat-box-title">Median ETH Balance</div>
+                            </div>
+                            <div class="stat-box secondary">
+                                ${num_data_providers}
+                                <div class="stat-box-title">Number of Data Providers</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
             } catch (error) {
-                resultsDiv.innerHTML = `Error: ${error.message}`;
+                resultsDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
             }
         }
 
         // Call immediately when page loads
         fetchResults();
     </script>
+    <div id="footer">
+        Made by the <a href="https://github.com/zkStats/mpc-demo-infra/" target="_blank">MPCStats</a> team.
+    </div>
 </body>
+</html>
 </html>
