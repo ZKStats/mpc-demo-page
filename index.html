@@ -197,6 +197,12 @@
         .stat-box.main-stat {
             min-height: auto;
         }
+        .update-note {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -209,7 +215,8 @@
         <input type="text" id="apiUrl" value="https://client-api.mpcstats.org:8004" onchange="fetchResults()" />
     </div>
     <div id="reminder">
-        <strong>Share your ETH balance on Binance:</strong> Follow the instructions in our <a href="https://github.com/ZKStats/mpc-demo-infra/tree/main/mpc_demo_infra/client_cli/docker" target="_blank">GitHub repository</a>. Contributors will receive an NFT and a chance to win $100 DAI! <a href="https://t.me/mpcstats">Stay tuned</a> for more information.
+        <strong>Share your ETH balance on Binance:</strong> Follow the instructions in our <a href="https://github.com/ZKStats/mpc-demo-infra/tree/main/mpc_demo_infra/client_cli/docker" target="_blank">GitHub repository</a>. Contributors will receive an NFT and a chance to win $100 DAI!
+        <div class="update-note">Note: Stats may take 5-10 minutes to update.</div>
     </div>
 
     <div id="results">Loading...</div>
