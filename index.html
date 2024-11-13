@@ -232,17 +232,30 @@
             }
         }
 
-        function formatNumber(num) {
-            return new Intl.NumberFormat('en-US', {
-                maximumFractionDigits: 4
-            }).format(num);
+        function formatNumber(num, type = 'default') {
+            switch (type) {
+                case 'gini':
+                    return new Intl.NumberFormat('en-US', {
+                        style: 'percent',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).format(num);
+                case 'mean':
+                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 3 }).format(num);
+                case 'balance':
+                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(num);
+                case 'providers':
+                    return Math.round(num);
+                default:
+                    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }).format(num);
+            }
         }
 
         function getGiniColor(gini) {
-            if (gini < 0.3) return '#4caf50';      // 綠色 - 較平等
-            if (gini < 0.4) return '#ffc107';      // 黃色 - 中等
-            if (gini < 0.5) return '#ff9800';      // 橙色 - 不平等
-            return '#f44336';                       // 紅色 - 非常不平等
+            if (gini < 0.3) return '#4caf50';      // green - equal
+            if (gini < 0.4) return '#ffc107';      // yellow - moderate
+            if (gini < 0.5) return '#ff9800';      // orange - inequality
+            return '#f44336';                       // red - very inequality
         }
 
         async function fetchResults() {
@@ -263,36 +276,37 @@
                     <div class="stat-container">
                         <div class="main-stat">
                             <div class="gini-indicator" style="background-color: ${giniColor}">
-                                ${formatNumber(gini_coefficient)}
+                                ${formatNumber(gini_coefficient, 'gini')}
                             </div>
                             <div class="gini-scale">
-                                <span>0</span>
+                                <span>0%</span>
                                 <div class="scale-bar">
                                     <div class="scale-marker" style="left: ${gini_coefficient * 100}%"></div>
                                 </div>
-                                <span>1</span>
+                                <span>100%</span>
                             </div>
                             <div class="stat-box-title">Gini (Inequality) Coefficient</div>
                             <div class="stat-box-note">
-                                0: Perfect Equality, 1: Maximum Inequality
+                                0%: Perfect Equality (everyone has the same amount of ETH)<br>
+                                100%: Perfect Inequality (one person has all ETH, others have none)
                                 <a href="https://en.wikipedia.org/wiki/Gini_coefficient" target="_blank" class="learn-more">(Learn more)</a>
                             </div>
                         </div>
                         <div class="secondary-stats">
                             <div class="stat-box secondary">
-                                ${formatNumber(mean)}
+                                ${formatNumber(mean, 'mean')}
                                 <div class="stat-box-title">Mean ETH Balance</div>
                             </div>
                             <div class="stat-box secondary">
-                                ${formatNumber(median)}
+                                ${formatNumber(median, 'balance')}
                                 <div class="stat-box-title">Median ETH Balance</div>
                             </div>
                             <div class="stat-box secondary">
-                                ${formatNumber(max)}
+                                ${formatNumber(max, 'balance')}
                                 <div class="stat-box-title">Max ETH Balance</div>
                             </div>
                             <div class="stat-box secondary">
-                                ${num_data_providers}
+                                ${formatNumber(num_data_providers, 'providers')}
                                 <div class="stat-box-title">Number of Data Providers</div>
                             </div>
                         </div>
